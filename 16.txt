@@ -1,0 +1,94 @@
+/*
+一、李红是房地产商的一名会计，她每天的主要工作就是——数钱。
+这并不是一件容易的事，房地产商主要投资两类地，一类是圆的，一类是方的。
+现在请你设计一个程序帮她数钱。
+Circle类和Square类继承于Land类，分别代表圆的地和方的地，其投资收入根据单位面积价格（price）和地的面积（根据边长或半径算出）决定。
+Accountant类用于计算开发各种房地产带来的收入。
+其中DevelopEstate函数接收一个Land的指针，计算并累加开发这块房地产带来的收入（动态绑定）。
+CheckMoney函数返回当前的收入。
+注：π可以用acos(-1)表示。acos()在<cmath>库里。
+*/
+
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+class Land
+{
+protected:                                          // 将成员属性设置为受保护类型
+ double side;
+ double price;
+public:
+ virtual double profit()                         // 虚函数
+ {
+  return 0;
+ }
+};
+
+class Circle :public Land
+{
+public:
+ Circle(double num1, double num2)
+ {
+  side = num1;
+  price = num2;
+ }
+
+ double profit()                                // 计算利润
+ {
+  return acos(-1) * side * side * price;
+ }
+};
+
+class Square :public Land
+{
+public:
+ Square(double num1, double num2)
+ {
+  side = num1;
+  price = num2;
+ }
+
+ double profit()                                 // 计算利润
+ {
+  return side * side * price;
+ }
+};
+
+class Accountant
+{
+private:
+ static double account;
+
+public:
+ void DevelopEstate(Land* land)                  // 传入land的指针，使用子类的函数
+ {
+  account += land->profit();
+  return;
+ }
+
+ double CheckMoney()
+ {
+  return account;
+ }
+};
+
+double Accountant::account = 0;
+
+int main() 
+{
+ Accountant py;                                              // Accountant类，用来计算相应的利润
+ Circle * a  = new Circle(100, 10000);      // 第一个参数是半径，第二个参数是单价
+ Square * b  = new Square(100, 30000);      // 第一个参数是边长，第二个参数是单价
+ py.DevelopEstate(a);
+ //setprecision是<iomanip>库中的函数
+ cout << setprecision(10) << py.CheckMoney() << endl;
+ py.DevelopEstate(b);
+ cout << setprecision(10) << py.CheckMoney() << endl;
+ // 释放new出来的内存
+ delete a;
+ delete b;                                                   
+ return 0;
+}
